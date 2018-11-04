@@ -91,7 +91,6 @@ for(j in 1:length(Historicos$Date)){#for rows
 ####Codigo para pedir los precios a OAnda fecha año-mes-dia
 # tomar cada fecha y descargar las fechaas
 data <- list()
-Calculos <-
 
   
 Historicos$Date <- as.character(as.POSIXct(Historicos$Date,format = "%m/%d/%Y %H:%M")) # conviert todas las fechas a fromato Oanda
@@ -134,13 +133,18 @@ Precios_Oanda$TimeStamp <- as.character(as.POSIXct(Precios_Oanda$TimeStamp,forma
 
 ind <- which(Precios_Oanda$TimeStamp == Historicos$Date[[i]])
 
-rend[1] <- 0
-rend[i+1]<-Precios_Oanda$Close[i+1]/Precios_Oanda$Close[i]-1
 
 
 data[[i]] <- list("Escenario" = Historicos$Clasificacion[i],"Precios" = Precios_Oanda[(ind-15):(ind+15),])
 #print(paste0("Iteracion: ",i, " Fecha 1 es: ", Fecha1, " Fecha 2 es: ", Fecha2))
-}
 
+Calculos$Rends[[i]]<-data[,list(mean = mean(data[[i]]$Precios$Close)), by = data$Escenario]
+
+Calculos$Desv_s[[i]]<-data[,list(desv = stdev(data[[i]]$Precios$Close)), by = data$Escenario]
+Calculos$Dif[[i]]<-data[,list(dif= data$Precios$Close[[1]] - data$Precios$Close[[31]]), by = data$Escenario]
+Calculos$max[[i]]<-date[,list(max = max(data$Precios$Close)-min(data$Precios$Close)),by = data$Escenarios] 
+
+
+}
 
 
